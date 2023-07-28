@@ -4,8 +4,10 @@ import 'package:show_list_beautify/themes/theme.dart';
 class ArrowButton extends StatelessWidget {
   final String text;
   final IconData startIcon;
+  final Function? onClick;
 
-  const ArrowButton({required this.text, required this.startIcon, Key? key})
+  const ArrowButton(
+      {required this.text, required this.startIcon, this.onClick, Key? key})
       : super(key: key);
 
   @override
@@ -14,7 +16,11 @@ class ArrowButton extends StatelessWidget {
       children: [
         IconButton(
           onPressed: () {
-            Navigator.pop(context);
+            if (onClick == null) {
+              Navigator.pop(context);
+            } else {
+              onClick!();
+            }
           },
           icon: Icon(
             startIcon,

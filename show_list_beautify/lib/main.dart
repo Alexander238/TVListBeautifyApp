@@ -21,8 +21,7 @@ class MyApp extends StatelessWidget {
       home: const HomePage(),
       // define the routes
       routes: {
-        '/homePage': (context) => const HomePage(),
-        '/listInput': (context) => const ListInput(),
+        '/home_page': (context) => const HomePage(),
       },
     );
   }

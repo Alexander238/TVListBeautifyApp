@@ -3,8 +3,12 @@ import 'package:show_list_beautify/screens/list_page.dart';
 import 'package:show_list_beautify/themes/theme.dart';
 import 'package:show_list_beautify/widgets/back_arrow_widget.dart';
 
+import '../file_management/file_manager.dart';
+
 class ListInput extends StatefulWidget {
-  const ListInput({Key? key}) : super(key: key);
+  const ListInput({Key? key, required this.listManager}) : super(key: key);
+
+  final ListManager listManager;
 
   @override
   State<ListInput> createState() => _ListInputState();
@@ -124,12 +128,14 @@ class _ListInputState extends State<ListInput> {
                         },
                       );
                     } else {
+                      List<String> listContent = secondTextFieldController.text.split("\n").toList();
+                      widget.listManager.addList(firstTextController.text, listContent);
                       Navigator.push(
                         context,
                         MaterialPageRoute(
                           builder: (context) => ListPage(
                             listName: firstTextController.text,
-                            listContent: secondTextFieldController.text.split("\n").toList(),
+                            listContent: listContent,
                           ),
                         ),
                       );
