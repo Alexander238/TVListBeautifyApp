@@ -81,7 +81,7 @@ class _HomePageState extends State<HomePage> {
                           context,
                           MaterialPageRoute(
                             builder: (context) =>
-                                ListPage(listName: items[index]),
+                                ListPage(listName: items[index], listContent: []),
                           ),
                         );
                       },
