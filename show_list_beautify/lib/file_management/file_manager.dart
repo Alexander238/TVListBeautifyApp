@@ -9,11 +9,12 @@ class ListManager {
   // Funktion zum Hinzufügen einer neuen Liste
   void addList(String listName, List<String> items) {
     lists[listName] = items;
+    saveListsLocally();
+  }
 
-    print(lists);
-
-    print(listName);
-    print(items);
+  // remove list by name
+  void removeList(String listName) {
+    lists.remove(listName);
     saveListsLocally();
   }
 
@@ -28,8 +29,6 @@ class ListManager {
       final file = await getLocalFile();
       final jsonData = json.encode(lists);
       await file.writeAsString(jsonData);
-
-      print("Lists saved to file successfully.");
     } catch (e) {
       print("Error while saving lists: $e");
     }

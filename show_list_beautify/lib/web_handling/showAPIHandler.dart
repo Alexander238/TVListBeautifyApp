@@ -1,16 +1,14 @@
 import 'dart:convert';
-
 import 'package:flutter/cupertino.dart';
-
 import '../widgets/list_element.dart';
 import 'package:http/http.dart' as http;
 
 
-final String errURL = "https://previews.123rf.com/images/ivanburchak/ivanburchak1906/ivanburchak190600253/125651894-404-page-not-found-design-template-big-red-404-numbers-on-the-shelf-404-error-page-concept-vector.jpg";
+const String errURL = "https://previews.123rf.com/images/ivanburchak/ivanburchak1906/ivanburchak190600253/125651894-404-page-not-found-design-template-big-red-404-numbers-on-the-shelf-404-error-page-concept-vector.jpg";
 
 String buildURL(String name) {
-  String modifiedName = name.replaceAll(' ', '+');
-  return "https://www.episodate.com/api/search?q=$modifiedName&page=1";
+  String modifiedName = name.replaceAll(' ', '+').trim();
+  return "https://www.episodate.com/api/search?q=" + modifiedName + "&page=1";
 }
 
 Future<String> getImageUrl(String url) async {
@@ -28,21 +26,19 @@ Future<String> getImageUrl(String url) async {
 
 Future<Widget> fetchDataByName(String name) async {
   String url = buildURL(name);
-
   Map<String, dynamic> jsonData = {};
-
   try {
     final response = await http.get(Uri.parse(url));
-
     if (response.statusCode == 200) {
       jsonData = json.decode(response.body);
-      //print(jsonData);
     } else {
       throw Exception('Failed to load data: ${response.statusCode}');
     }
   } catch (e) {
     print('Error: $e');
   }
+
+  
 
   String thumbnailUrl = findThumbnailUrl(jsonData, name);
 

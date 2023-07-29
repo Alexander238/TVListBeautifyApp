@@ -27,34 +27,35 @@ class _ListPageState extends State<ListPage> {
       backgroundColor: primaryBackground,
       body: SafeArea(
         child: Center(
-            child: Padding(
-          padding: const EdgeInsets.fromLTRB(12, 0, 12, 0),
-          child: CustomScrollView(
-            slivers: [
-              SliverAppBar(
-                pinned: true,
-                automaticallyImplyLeading: false,
-                backgroundColor: primaryBackground,
-                flexibleSpace: FlexibleSpaceBar(
-                  background: ArrowButton(
-                    text: widget.listName,
-                    startIcon: Icons.arrow_back_rounded,
-                    //on click navigate to home_page
-                    onClick: () {Navigator.pushReplacementNamed(context, '/home_page');}
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(12, 0, 12, 0),
+            child: CustomScrollView(
+              slivers: [
+                SliverAppBar(
+                  pinned: true,
+                  automaticallyImplyLeading: false,
+                  backgroundColor: primaryBackground,
+                  flexibleSpace: FlexibleSpaceBar(
+                    background: ArrowButton(
+                      text: widget.listName,
+                      startIcon: Icons.arrow_back_rounded,
+                      //on click navigate to home_page
+                      onClick: () {
+                        Navigator.pushReplacementNamed(context, '/home_page');
+                      },
+                    ),
                   ),
                 ),
-              ),
-              SliverGrid(
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2, // Number of columns in the grid
-                  crossAxisSpacing: 8.0, // Spacing between columns
-                  mainAxisSpacing: 8.0, // Spacing between rows
-                  childAspectRatio: 4 / 6,
-                ),
-                delegate: SliverChildBuilderDelegate(
-                  (context, index) {
-                    return Expanded(
-                      child: FutureBuilder<Widget>(
+                SliverGrid(
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2, // Number of columns in the grid
+                    crossAxisSpacing: 8.0, // Spacing between columns
+                    mainAxisSpacing: 8.0, // Spacing between rows
+                    childAspectRatio: 4 / 6,
+                  ),
+                  delegate: SliverChildBuilderDelegate(
+                    (context, index) {
+                      return FutureBuilder<Widget>(
                         future: fetchDataByName(widget.listContent[index]),
                         builder: (context, snapshot) {
                           if (snapshot.connectionState ==
@@ -66,15 +67,15 @@ class _ListPageState extends State<ListPage> {
                             return snapshot.data!;
                           }
                         },
-                      ),
-                    );
-                  },
-                  childCount: widget.listContent.length,
+                      );
+                    },
+                    childCount: widget.listContent.length,
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-        )),
+        ),
       ),
     );
   }
