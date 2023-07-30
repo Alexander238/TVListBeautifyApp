@@ -18,22 +18,26 @@ class NamedPictureCard extends StatelessWidget {
         onTap: onTap as void Function()?,
         child: Column(
           children: [
-            Expanded(child: 
-            FutureBuilder<String>(
-              future: image,
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return CircularProgressIndicator();
-                } else if (snapshot.hasError) {
-                  return Text('Error loading image');
-                } else {
-                  return Image.network(
-                    snapshot.data!, 
-                    fit: BoxFit.cover,
+            Expanded(
+              child: FutureBuilder<String>(
+                future: image,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return CircularProgressIndicator();
+                  } else if (snapshot.hasError) {
+                    return Text('Error loading image');
+                  } else {
+                    return ClipRRect(
+                      borderRadius: BorderRadius.circular(10.0), // Circular border radius
+                      child: Image.network(
+                        snapshot.data!,
+                        fit: BoxFit.cover,
+                      ),
                     );
-                }
-              },
-            ),)
+                  }
+                },
+              ),
+            ),
           ],
         ),
       ),

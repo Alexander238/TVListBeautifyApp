@@ -1,10 +1,12 @@
 import 'dart:convert';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import '../screens/detail_page.dart';
 import '../widgets/list_element.dart';
 import 'package:http/http.dart' as http;
 
-
-const String errURL = "https://previews.123rf.com/images/ivanburchak/ivanburchak1906/ivanburchak190600253/125651894-404-page-not-found-design-template-big-red-404-numbers-on-the-shelf-404-error-page-concept-vector.jpg";
+const String errURL =
+    "https://previews.123rf.com/images/ivanburchak/ivanburchak1906/ivanburchak190600253/125651894-404-page-not-found-design-template-big-red-404-numbers-on-the-shelf-404-error-page-concept-vector.jpg";
 
 String buildURL(String name) {
   String modifiedName = name.replaceAll(' ', '+').trim();
@@ -21,10 +23,10 @@ Future<String> getImageUrl(String url) async {
     return url;
   } else {
     return errURL;
-    }
+  }
 }
 
-Future<Widget> fetchDataByName(String name) async {
+Future<Widget> fetchDataByName(String name, context) async {
   String url = buildURL(name);
   Map<String, dynamic> jsonData = {};
   try {
@@ -38,13 +40,18 @@ Future<Widget> fetchDataByName(String name) async {
     print('Error: $e');
   }
 
-  
-
   String thumbnailUrl = findThumbnailUrl(jsonData, name);
 
   return NamedPictureCard(
     name: name,
-    onTap: () => {},
+    onTap: () => {
+      print("picture card clicked"),  
+      Navigator.push(context, 
+      MaterialPageRoute(
+        builder: (context) => DetailPage(showNameID: 0
+        ),
+      ),)
+    },
     image: getImageUrl(thumbnailUrl),
   );
 }
@@ -66,4 +73,3 @@ String findThumbnailUrl(Map<String, dynamic> jsonData, String name) {
 
   return ''; // Return empty string if no TV shows found
 }
-

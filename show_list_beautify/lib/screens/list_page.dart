@@ -1,12 +1,6 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:show_list_beautify/widgets/list_element.dart';
-
 import '../themes/theme.dart';
 import '../widgets/back_arrow_widget.dart';
-
-import 'package:http/http.dart' as http;
 import 'package:show_list_beautify/web_handling/showAPIHandler.dart';
 
 class ListPage extends StatefulWidget {
@@ -26,54 +20,53 @@ class _ListPageState extends State<ListPage> {
     return Scaffold(
       backgroundColor: primaryBackground,
       body: SafeArea(
-        child: Center(
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(12, 0, 12, 0),
-            child: CustomScrollView(
-              slivers: [
-                SliverAppBar(
-                  pinned: true,
-                  automaticallyImplyLeading: false,
-                  backgroundColor: primaryBackground,
-                  flexibleSpace: FlexibleSpaceBar(
-                    background: ArrowButton(
-                      text: widget.listName,
-                      startIcon: Icons.arrow_back_rounded,
-                      //on click navigate to home_page
-                      onClick: () {
-                        Navigator.pushReplacementNamed(context, '/home_page');
-                      },
-                    ),
-                  ),
-                ),
-                SliverGrid(
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2, // Number of columns in the grid
-                    crossAxisSpacing: 8.0, // Spacing between columns
-                    mainAxisSpacing: 8.0, // Spacing between rows
-                    childAspectRatio: 4 / 6,
-                  ),
-                  delegate: SliverChildBuilderDelegate(
-                    (context, index) {
-                      return FutureBuilder<Widget>(
-                        future: fetchDataByName(widget.listContent[index]),
-                        builder: (context, snapshot) {
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            return CircularProgressIndicator();
-                          } else if (snapshot.hasError) {
-                            return Text('Error loading data');
-                          } else {
-                            return snapshot.data!;
-                          }
-                        },
-                      );
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: CustomScrollView(
+            slivers: [
+              SliverAppBar(
+                pinned: true,
+                automaticallyImplyLeading: false,
+                backgroundColor: primaryBackground,
+                flexibleSpace: FlexibleSpaceBar(
+                  background: ArrowButton(
+                    text: widget.listName,
+                    startIcon: Icons.arrow_back_rounded,
+                    //on click navigate to home_page
+                    onClick: () {
+                      Navigator.pushReplacementNamed(context, '/home_page');
                     },
-                    childCount: widget.listContent.length,
                   ),
                 ),
-              ],
-            ),
+              ),
+              SliverGrid(
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2, // Number of columns in the grid
+                  crossAxisSpacing: 12.0, // Spacing between columns
+                  mainAxisSpacing: 12.0, // Spacing between rows
+                  childAspectRatio: 4 / 6,
+                ),
+                delegate: SliverChildBuilderDelegate(
+                  (context, index) {
+                    return FutureBuilder<Widget>(
+                      future:
+                          fetchDataByName(widget.listContent[index], context),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return const CircularProgressIndicator();
+                        } else if (snapshot.hasError) {
+                          return const Text('Error loading data');
+                        } else {
+                          return snapshot.data!;
+                        }
+                      },
+                    );
+                  },
+                  childCount: widget.listContent.length,
+                ),
+              ),
+            ],
           ),
         ),
       ),

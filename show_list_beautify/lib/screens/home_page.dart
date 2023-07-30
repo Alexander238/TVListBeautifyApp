@@ -54,27 +54,28 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: primaryBackground,
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: SearchBar(
-              editingController: editingController,
-              filterSearchResults: filterListsLocally,
+      body: SafeArea(
+          child: Container(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(0, 0, 0, 32),
+              child: SearchBar(
+                editingController: editingController,
+                filterSearchResults: filterListsLocally,
+              ),
             ),
-          ),
-          Expanded(
-            child: ListWidget(
-              filteredListNames: filteredListNames,
-              selectedItems: selectedItems,
-              isDeleteButtonVisible: isDeleteButtonVisible,
-              toggleDeleteButton: toggleDeleteButton,
+            Expanded(
+              child: ListWidget(
+                filteredListNames: filteredListNames,
+                selectedItems: selectedItems,
+                isDeleteButtonVisible: isDeleteButtonVisible,
+                toggleDeleteButton: toggleDeleteButton,
+              ),
             ),
-          ),
-          Visibility(
-            visible: !isDeleteButtonVisible,
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
+            Visibility(
+              visible: !isDeleteButtonVisible,
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: redPrimary,
@@ -93,11 +94,8 @@ class _HomePageState extends State<HomePage> {
                 child: const Text('Create New List'),
               ),
             ),
-          ),
-          Visibility(
-            visible: isDeleteButtonVisible,
-            child: Container(
-              padding: const EdgeInsets.all(8.0),
+            Visibility(
+              visible: isDeleteButtonVisible,
               child: Row(
                 children: [
                   Expanded(
@@ -122,7 +120,7 @@ class _HomePageState extends State<HomePage> {
                   Expanded(
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.red,
+                        backgroundColor: redPrimary,
                         minimumSize: const Size.fromHeight(50),
                       ),
                       onPressed: deleteSelectedItems,
@@ -132,9 +130,9 @@ class _HomePageState extends State<HomePage> {
                 ],
               ),
             ),
-          ),
-        ],
-      ),
+          ],
+        ),
+      )),
     );
   }
 
@@ -155,11 +153,10 @@ class _HomePageState extends State<HomePage> {
 
       // Reset the selectedItems list and hide the delete button
       allListNames = listManager.loadLists().keys.toList();
-      print(filteredListNames.length);
-      filteredListNames = allListNames.where((listName) => filteredListNames.contains(listName)).toList();
-      print(filteredListNames.length);
+      filteredListNames = allListNames
+          .where((listName) => filteredListNames.contains(listName))
+          .toList();
       selectedItems = List.filled(filteredListNames.length, false);
-      print(selectedItems.length);
       isDeleteButtonVisible = false;
     });
   }
@@ -233,7 +230,7 @@ class _ListWidgetState extends State<ListWidget> {
             widget.toggleDeleteButton(true);
           },
           child: Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.fromLTRB(0, 8, 0, 8),
             child: ListTile(
               trailing: widget.isDeleteButtonVisible
                   ? Checkbox(
@@ -265,10 +262,10 @@ class _ListWidgetState extends State<ListWidget> {
                 listName,
                 style: TextStyle(color: whiteText),
               ),
-              // bug with tileColor 
-              //tileColor: widget.selectedItems[index]
-              //    ? redSecondary.withOpacity(0.5) // Color for selected item
-              //    : secondaryBackground,
+              // bug with tileColor
+              tileColor: checkSelectedItems(widget.selectedItems, index)
+                  ? redSecondary.withOpacity(0.3) // Color for selected item
+                  : secondaryBackground,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10.0),
               ),
@@ -277,5 +274,14 @@ class _ListWidgetState extends State<ListWidget> {
         );
       },
     );
+  }
+
+  bool checkSelectedItems(List<bool> sItems, int index) {
+    try {
+      return sItems[index];
+    } catch (e) {
+      // happens when items get searched, deleted and search is cleared.
+      return false;
+    }
   }
 }

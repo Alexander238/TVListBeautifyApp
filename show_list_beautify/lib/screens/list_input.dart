@@ -21,12 +21,11 @@ class _ListInputState extends State<ListInput> {
   bool isListContentEmpty = false;
 
   void validateTextFields() {
-  setState(() {
-    isListNameEmpty = firstTextController.text.isEmpty;
-    isListContentEmpty = secondTextFieldController.text.isEmpty;
-  });
-}
-
+    setState(() {
+      isListNameEmpty = firstTextController.text.isEmpty;
+      isListContentEmpty = secondTextFieldController.text.isEmpty;
+    });
+  }
 
   @override
   void dispose() {
@@ -56,6 +55,7 @@ class _ListInputState extends State<ListInput> {
                     ),
                     const SizedBox(height: 32),
 
+                    // List-name textfield
                     TextField(
                       controller: firstTextController,
                       style: TextStyle(color: whiteText),
@@ -74,9 +74,8 @@ class _ListInputState extends State<ListInput> {
                         ),
                       ),
                     ),
-
                     spacer,
-
+                    // List-input textfield
                     TextField(
                       controller: secondTextFieldController,
                       maxLines:
@@ -100,49 +99,49 @@ class _ListInputState extends State<ListInput> {
                   ],
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(8, 16, 8, 0),
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: redPrimary,
-                    minimumSize: const Size.fromHeight(50), // NEW
-                  ),
-                  onPressed: () {
-                    validateTextFields();
-                    if (isListNameEmpty || isListContentEmpty) {
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return AlertDialog(
-                            title: const Text('Error'),
-                            content: const Text('Please fill in all fields'),
-                            actions: [
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                },
-                                child: const Text('OK'),
-                              ),
-                            ],
-                          );
-                        },
-                      );
-                    } else {
-                      List<String> listContent = secondTextFieldController.text.split("\n").toList();
-                      widget.listManager.addList(firstTextController.text, listContent);
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => ListPage(
-                            listName: firstTextController.text,
-                            listContent: listContent,
-                          ),
-                        ),
-                      );
-                    }
-                  },
-                  child: const Text('Enter List'),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: redPrimary,
+                  minimumSize: const Size.fromHeight(50),
                 ),
+                onPressed: () {
+                  // check if the list name and list content are empty
+                  validateTextFields();
+                  if (isListNameEmpty || isListContentEmpty) {
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: const Text('Error'),
+                          content: const Text('Please fill in all fields'),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                              child: const Text('OK'),
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  } else {
+                    List<String> listContent =
+                        secondTextFieldController.text.split("\n").toList();
+                    widget.listManager
+                        .addList(firstTextController.text, listContent);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ListPage(
+                          listName: firstTextController.text,
+                          listContent: listContent,
+                        ),
+                      ),
+                    );
+                  }
+                },
+                child: const Text('Enter List'),
               ),
             ],
           ),
