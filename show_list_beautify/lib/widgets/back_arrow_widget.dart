@@ -13,8 +13,11 @@ class ArrowButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         IconButton(
+          padding: const EdgeInsets.only(top: 2),
+          splashRadius: 20,
           onPressed: () {
             if (onClick == null) {
               Navigator.pop(context);

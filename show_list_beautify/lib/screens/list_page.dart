@@ -21,7 +21,7 @@ class _ListPageState extends State<ListPage> {
       backgroundColor: primaryBackground,
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
           child: CustomScrollView(
             slivers: [
               SliverAppBar(
@@ -34,7 +34,7 @@ class _ListPageState extends State<ListPage> {
                     startIcon: Icons.arrow_back_rounded,
                     //on click navigate to home_page
                     onClick: () {
-                      Navigator.pushReplacementNamed(context, '/home_page');
+                      Navigator.pop(context);
                     },
                   ),
                 ),

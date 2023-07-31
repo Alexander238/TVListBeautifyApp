@@ -1,7 +1,7 @@
 import 'dart:convert';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../screens/detail_page.dart';
+import '../structs/show_data_struct.dart';
 import '../widgets/list_element.dart';
 import 'package:http/http.dart' as http;
 
@@ -40,36 +40,84 @@ Future<Widget> fetchDataByName(String name, context) async {
     print('Error: $e');
   }
 
-  String thumbnailUrl = findThumbnailUrl(jsonData, name);
+  Map<String, dynamic> showArray = findShowMap(jsonData, name);
+
+  String thumbnailUrl =
+      executeShowSearchByKey(showArray, name, "image_thumbnail_path");
 
   return NamedPictureCard(
     name: name,
     onTap: () => {
-      print("picture card clicked"),  
-      Navigator.push(context, 
-      MaterialPageRoute(
-        builder: (context) => DetailPage(showNameID: 0
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => DetailPage(
+            showNameID: (executeShowSearchByKey(showArray, name, "id").isEmpty)
+                ? 0
+                : int.parse(executeShowSearchByKey(showArray, name, "id")),
+          ),
         ),
-      ),)
+      )
     },
     image: getImageUrl(thumbnailUrl),
   );
 }
 
-String findThumbnailUrl(Map<String, dynamic> jsonData, String name) {
+String executeShowSearchByKey(
+    Map<String, dynamic> showArray, String name, String key) {
+  if (showArray.isNotEmpty) {
+    return showArray[key].toString();
+  }
+  return "";
+}
+
+Map<String, dynamic> findShowMap(Map<String, dynamic> jsonData, String name) {
   List<dynamic> tvShows = jsonData['tv_shows'];
 
   for (var tvShow in tvShows) {
     String showName = tvShow['name'];
     if (name.toLowerCase() == showName.toLowerCase()) {
-      return tvShow['image_thumbnail_path'];
+      return tvShow;
     }
   }
 
-  // If no exact match, return the thumbnail URL of the first result (if available)
+  // If no exact match, return the first result (if available)
   if (tvShows.isNotEmpty) {
-    return tvShows[0]['image_thumbnail_path'];
+    return tvShows[0];
   }
 
-  return ''; // Return empty string if no TV shows found
+  return {}; // Return an empty map if no TV shows found
+}
+
+Future<ShowData> fetchDataByID(int id, context) async {
+  String url = "https://www.episodate.com/api/show-details?q=" + id.toString();
+  Map<String, dynamic> jsonData = {};
+
+  try {
+    final response = await http.get(Uri.parse(url));
+    if (response.statusCode == 200) {
+      jsonData = json.decode(response.body);
+    } else {
+      throw Exception('Failed to load data: ${response.statusCode}');
+    }
+  } catch (e) {
+    print('Error: $e');
+  }
+
+  // handle if no show found
+  if (jsonData['tvShow'].isEmpty) {
+    return ShowData(
+      name: "Error",
+      rating: 0,
+      rating_count: 0,
+      releaseYear: 0,
+      genres: [],
+      status: "Error",
+      description: "Error",
+      pictureUrls: [],
+    );
+  } else {
+    ShowData showData = ShowData.fromJson(jsonData['tvShow']);
+    return showData;
+  }
 }
