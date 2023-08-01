@@ -89,7 +89,9 @@ class _HomePageState extends State<HomePage> {
                         listManager: listManager,
                       ),
                     ),
-                  );
+                  ).then((value) => setState(() {
+                        loadLists();
+                      })); 
                 },
                 child: const Text('Create New List'),
               ),

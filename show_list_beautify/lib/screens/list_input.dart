@@ -130,7 +130,7 @@ class _ListInputState extends State<ListInput> {
                         secondTextFieldController.text.split("\n").toList();
                     widget.listManager
                         .addList(firstTextController.text, listContent);
-                    Navigator.push(
+                    Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
                         builder: (context) => ListPage(
