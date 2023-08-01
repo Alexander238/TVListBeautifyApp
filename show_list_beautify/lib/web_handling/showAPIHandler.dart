@@ -5,8 +5,7 @@ import '../structs/show_data_struct.dart';
 import '../widgets/list_element.dart';
 import 'package:http/http.dart' as http;
 
-const String errURL =
-    "https://previews.123rf.com/images/ivanburchak/ivanburchak1906/ivanburchak190600253/125651894-404-page-not-found-design-template-big-red-404-numbers-on-the-shelf-404-error-page-concept-vector.jpg";
+const String errURL = "https://www.generationsforpeace.org/wp-content/uploads/2018/03/empty.jpg";
 const String apiKey = "4d9caa79700d612de9d461ffda9aeea0";
 
 Future<String> getImageUrl(String url) async {
@@ -54,36 +53,37 @@ Map<String, dynamic> findShowMap(Map<String, dynamic> jsonData, String name) {
   return {};
 }
 
-Future<ShowData> fetchDataByID(int id, context) async {
-  String url = "https://www.episodate.com/api/show-details?q=" + id.toString();
-  Map<String, dynamic> jsonData = {};
+Future<ShowData> fetchDataByID(int id, bool isMovie) async {
+  String url = "";
+  if (isMovie) {
+    url = "https://api.themoviedb.org/3/movie/$id?api_key=$apiKey";
+  } else {
+    url = "https://api.themoviedb.org/3/tv/$id?api_key=$apiKey";
+  }
+  print("detail: " + url);
+  print("isMovie? " + isMovie.toString());
 
   try {
     final response = await http.get(Uri.parse(url));
+
     if (response.statusCode == 200) {
-      jsonData = json.decode(response.body);
+      Map<String, dynamic> jsonData = json.decode(response.body);
+      return ShowData.fromJson(jsonData);
     } else {
       throw Exception('Failed to load data: ${response.statusCode}');
     }
   } catch (e) {
     print('Error: $e');
-  }
-
-  // handle if no show found
-  if (jsonData['tvShow'].isEmpty) {
     return ShowData(
       name: "Error",
       rating: 0,
-      rating_count: 0,
+      ratingCount: 0,
       releaseYear: 0,
       genres: [],
       status: "Error",
       description: "Error",
       pictureUrls: [],
     );
-  } else {
-    ShowData showData = ShowData.fromJson(jsonData['tvShow']);
-    return showData;
   }
 }
 
@@ -112,6 +112,8 @@ Future<Widget> fetchDataByName(String name, context) async {
     thumbnailUrl = errURL;
   }
 
+  String mediaType = executeShowSearchByKey(showArray, name, "media_type");
+
   return NamedPictureCard(
     name: name,
     onTap: () => {
@@ -122,6 +124,7 @@ Future<Widget> fetchDataByName(String name, context) async {
             showNameID: (executeShowSearchByKey(showArray, name, "id").isEmpty)
                 ? 0
                 : int.parse(executeShowSearchByKey(showArray, name, "id")),
+            isMovie: mediaType.contains("movie"),
           ),
         ),
       )

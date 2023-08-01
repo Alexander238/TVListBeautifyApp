@@ -6,9 +6,10 @@ import '../structs/show_data_struct.dart';
 import '../widgets/show_more_text.dart';
 
 class DetailPage extends StatefulWidget {
-  const DetailPage({Key? key, required this.showNameID}) : super(key: key);
+  const DetailPage({Key? key, required this.showNameID, required this.isMovie}) : super(key: key);
 
   final int showNameID;
+  final bool isMovie;
 
   @override
   State<DetailPage> createState() => _DetailPageState();
@@ -25,7 +26,7 @@ class _DetailPageState extends State<DetailPage> {
   @override
   void initState() {
     super.initState();
-    _showDataFuture = fetchDataByID(widget.showNameID, context);
+    _showDataFuture = fetchDataByID(widget.showNameID, widget.isMovie);
 
     // Add a listener to update the currentPage when the page changes
     _pageController.addListener(() {
@@ -211,7 +212,7 @@ class _DetailPageState extends State<DetailPage> {
                                     ],
                                   ),
                                   Text(
-                                    "${_showData.rating_count} votes",
+                                    "${_showData.ratingCount} votes",
                                     style: TextStyle(
                                       color: redSecondary,
                                       fontSize: 10 %

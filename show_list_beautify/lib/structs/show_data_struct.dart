@@ -1,7 +1,7 @@
 class ShowData {
   final String name;
   final double rating;
-  final int rating_count;
+  final int ratingCount;
   final int releaseYear;
   final List<String> genres;
   final String status;
@@ -11,7 +11,7 @@ class ShowData {
   ShowData({
     required this.name,
     required this.rating,
-    required this.rating_count,
+    required this.ratingCount,
     required this.releaseYear,
     required this.genres,
     required this.status,
@@ -19,27 +19,71 @@ class ShowData {
     required this.pictureUrls,
   });
 
-  // Factory method to create ShowData object from JSON
-  factory ShowData.fromJson(Map<String, dynamic> json) {
-    double rating = double.parse(json['rating'].toString());
-    double parsedRating = double.parse(rating.toStringAsFixed(1));
+  factory ShowData.fromJson(Map<String, dynamic> jsonData) {
+    List<dynamic> genreList = jsonData['genres'] ?? [];
+    List<String> genres =
+        genreList.map((genre) => genre['name'].toString()).toList();
 
-    int releaseYear;
-    try {
-      releaseYear = DateTime.parse(json['start_date']).year;
-    } catch (e) {
-      releaseYear = 0;
+    List<String> pictureUrls = [];
+    String tempName = "";
+    String firstAirDate = "";
+
+    if (jsonData.containsKey('seasons')) {
+      List<dynamic> elements = jsonData['seasons'] ?? [];
+      List<String> pictureUrls = elements
+          // maybe the contains is a bad idea, maybe must be changed later
+          .where((season) => season['name'] != "Specials")
+          .map((season) =>
+              "https://image.tmdb.org/t/p/w500${season['poster_path']}")
+          .toList();
+
+      List<String> specialUrls = elements
+          // maybe the contains is a bad idea, maybe must be changed later
+          .where((season) => season['name'] == "Specials")
+          .map((season) =>
+              "https://image.tmdb.org/t/p/w500${season['poster_path']}")
+          .toList();
+
+      pictureUrls.addAll(specialUrls);
+
+      //name
+      tempName = jsonData['name'] ?? "Error";
+
+      //date
+      firstAirDate = jsonData['first_air_date'] ?? "";
+    } else {
+      String thumbnailUrl = "";
+      if (jsonData['poster_path'] != null) {
+        String modifiedURL = jsonData['poster_path'];
+        thumbnailUrl = "https://image.tmdb.org/t/p/w500$modifiedURL";
+      }
+      pictureUrls.add(thumbnailUrl);
+
+      //name
+      tempName = jsonData['original_title'] ?? "Error";
+      
+      //date
+      firstAirDate = jsonData['release_date'] ?? "";
+    }
+
+    double newRating = jsonData['vote_average'] ?? 0.0;
+    newRating = (newRating * 10).round() / 10;
+
+    int releaseYear = 0;
+    if (firstAirDate.length >= 4) {
+      String yearString = firstAirDate.substring(0, 4);
+      releaseYear = int.tryParse(yearString) ?? 0;
     }
 
     return ShowData(
-      name: json['name'].toString(),
-      rating: parsedRating,
-      rating_count: int.parse(json['rating_count']),
+      name: tempName,
+      rating: newRating,
+      ratingCount: jsonData['vote_count'] ?? 0,
       releaseYear: releaseYear,
-      genres: List<String>.from(json['genres']),
-      status: json['status'].toString(),
-      description: json['description'].toString(),
-      pictureUrls: List<String>.from([json['image_path']] + json['pictures']),
+      genres: genres,
+      status: jsonData['status'] ?? "Error",
+      description: jsonData['overview'] ?? "Error",
+      pictureUrls: pictureUrls,
     );
   }
 }
