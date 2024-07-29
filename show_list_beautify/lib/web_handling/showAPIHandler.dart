@@ -6,7 +6,7 @@ import '../widgets/list_element.dart';
 import 'package:http/http.dart' as http;
 
 const String errURL = "https://www.generationsforpeace.org/wp-content/uploads/2018/03/empty.jpg";
-const String apiKey = "4d9caa79700d612de9d461ffda9aeea0";
+const String apiKey = "XYZ";
 
 Future<String> getImageUrl(String url) async {
   if (url.isEmpty) {
