@@ -6,7 +6,7 @@ As of now, I kind of stopped working on it a while ago, since I didn't really ne
 
 # Regarding The API-Key
 
-I know the API-Key I used is still visible in this repository. It's an old one and not up-to-date anymore, so it's fine. This Repository was originally supposed to stay private, so I didn't make an effort to encrypt it in any way.
+I'm aware that the API-Key used in this project is still visible in this repository. It's an old one and not up-to-date anymore, so it's fine. This Repository was originally supposed to stay private, so I didn't make an effort to encrypt it in any way.
 
 ## ToDos
 
